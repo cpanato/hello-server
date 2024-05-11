@@ -17,4 +17,4 @@ entrypoint:
   command: /usr/bin/hello-wolfi
 
 archs:
-  - x86_64
+  - aarch64

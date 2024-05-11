@@ -1,10 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ########################
 # include the magic
 ########################
-. /Users/strongjz/Documents/code/go/src/github.com/paxtonhare/demo-magic/demo-magic.sh
+. /Users/cpanato/code/src/github.com/paxtonhare/demo-magic/demo-magic.sh
 
+TYPE_SPEED=60
 # hide the evidence
 clear
 
@@ -13,11 +14,11 @@ pei "docker pull cgr.dev/chainguard/melange:latest"
 pei "docker pull cgr.dev/chainguard/apko:latest"
 
 wait
-clear 
+clear
 
 pei "docker run --rm -v "${PWD}":/work cgr.dev/chainguard/melange keygen"
 
-wait 
+wait
 clear
 
 pei "docker run --privileged --rm -v \"${PWD}\":/work -- \
@@ -25,20 +26,22 @@ pei "docker run --privileged --rm -v \"${PWD}\":/work -- \
   --arch $(uname -m) \
   --signing-key melange.rsa --keyring-append melange.rsa.pub"
 
-wait 
+wait
+clear
 
- pei "docker run --rm -v ${PWD}:/work cgr.dev/chainguard/apko build --arch $(uname -m) --debug apko.yaml hello-wolfi:latest hello-wolfi.tar -k melange.rsa.pub"
+pei "docker run --rm -v ${PWD}:/work cgr.dev/chainguard/apko build --workdir=/work --log-level=debug -k melange.rsa.pub apko.yaml hello-wolfi:latest hello-wolfi.tar"
 
- wait 
+wait
+clear
 
- pei "docker load < hello-wolfi.tar"
+docker load < hello-wolfi.tar
 
- wait 
 
- pei "docker run --name wolfi-demo --rm -p 8080:8080 -d hello-wolfi:latest-arm64"
+pei "docker run --name wolfi-demo --rm -p 8080:8080 -d hello-wolfi:latest-arm64"
 
-wait 
+wait
+clear
 
 pei "curl http://localhost:8080"
 
-docker stop wolfi-demo 
+docker stop wolfi-demo
